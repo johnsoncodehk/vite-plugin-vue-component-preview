@@ -1,0 +1,20 @@
+{
+	"name": "vite-plugin-vue-component-preview",
+	"version": "0.1.0",
+	"license": "MIT",
+	"files": [
+		"out"
+	],
+	"main": "out/index.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/johnsoncodehk/vite-plugin-vue-component-preview.git"
+	},
+	"devDependencies": {
+		"typescript": "latest",
+		"vite": "latest"
+	},
+	"dependencies": {
+		"vite-plugin-vue-markdown": "^0.1.0"
+	}
+}
