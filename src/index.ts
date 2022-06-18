@@ -18,7 +18,7 @@ export default function Preview(): PluginOption {
 		load(id) {
 			if (id === resolvedVirtualModuleId) {
 				return `
-import { defineAsyncComponent, defineComponent, h } from 'vue';
+import { defineAsyncComponent, defineComponent, h, Suspense } from 'vue';
 
 export default function installPreview(app) {
 	if (location.pathname === '/__preview') {
@@ -36,9 +36,9 @@ export default function installPreview(app) {
 		const Layout = defineAsyncComponent(async () => import(fileName + '?preview'));
 		const Previewer = defineComponent({
 			setup: function () {
-				return () => h(Layout, undefined, {
+				return () => h(Suspense, undefined, [h(Layout, undefined, {
 					default: (props) => h(Component, props)
-				});
+				})]);
 			},
 		});
 		// @ts-expect-error
