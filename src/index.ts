@@ -20,7 +20,7 @@ export default function Preview(): PluginOption {
 				return `
 import { defineAsyncComponent, defineComponent, h, Suspense } from 'vue';
 
-export default function installPreview(app) {
+export default function(app) {
 	if (location.pathname === '/__preview') {
 
 		const url = new URL(location.href);
@@ -50,14 +50,11 @@ export default function installPreview(app) {
 		transform(code, id) {
 			if (id.endsWith('.vue')) {
 				// remove preview block
-				const previewBlock = code.match(previewBlockReg);
-				if (previewBlock) {
-					const index = previewBlock.index ?? code.indexOf(previewBlock[0]);
-					code = code.substring(0, index) + code.substring(index + previewBlock[0].length);
-				}
+				code = code.replace(previewBlockReg, '');
 			}
 			else if (id.endsWith('.vue?preview')) {
 				// extract preview block content
+				code = removeHtmlComments(code);
 				const previewBlock = code.match(previewBlockReg);
 				if (previewBlock) {
 					const startTagEnd = previewBlock[0].indexOf('>') + 1;
@@ -70,4 +67,9 @@ export default function installPreview(app) {
 			return code;
 		},
 	};
+}
+
+function removeHtmlComments(htmlCode: string) {
+	const htmlCommentRege = /<!--[\s\S]*?-->/g;
+	return htmlCode.replace(htmlCommentRege, '');
 }
