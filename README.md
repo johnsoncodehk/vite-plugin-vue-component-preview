@@ -60,7 +60,7 @@ const count = ref(0)
 
 <!-- Preview part -->
 
-<preview lang="html">
+<preview lang="md">
 # This is preview page of HelloWorld.vue
 
 ## Props
