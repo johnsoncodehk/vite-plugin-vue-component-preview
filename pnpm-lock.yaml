@@ -3,10 +3,10 @@ lockfileVersion: 5.4
 specifiers:
   typescript: latest
   vite: latest
-  vite-plugin-vue-markdown: ^0.1.0
+  vite-plugin-vue-markdown: ^0.1.1
 
 dependencies:
-  vite-plugin-vue-markdown: 0.1.0_vite@2.9.12
+  vite-plugin-vue-markdown: 0.1.1_vite@2.9.12
 
 devDependencies:
   typescript: 4.7.4
@@ -437,8 +437,8 @@ packages:
     resolution: {integrity: sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==}
     dev: false
 
-  /vite-plugin-vue-markdown/0.1.0_vite@2.9.12:
-    resolution: {integrity: sha512-7mnWdF3PjJ2pHidcxwFkvKdT2Il5D9cXPnf9OmKeXo8DStBtz0RMb2TFw5QbVVxrlLUGoFZBsA/BIbGs5mXcdQ==}
+  /vite-plugin-vue-markdown/0.1.1_vite@2.9.12:
+    resolution: {integrity: sha512-A68hNB46N6+do20LJz5HjEOegdAeSNRSivE2VhGwoNxV/v9ShqS/pXv2ENoifFWClqqD+j4pf3pjCaYFGR+74w==}
     peerDependencies:
       vite: ^2.0.0
     dependencies:
