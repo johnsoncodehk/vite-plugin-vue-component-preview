@@ -10,6 +10,7 @@ export default function Preview(): PluginOption {
 	const resolvedVirtualModuleId = '\0' + virtualModuleId;
 
 	let server: ViteDevServer;
+	let proxyingHotUpdateFile: string | undefined;
 
 	return {
 		name: 'vite-plugin-vue-component-preview',
@@ -41,8 +42,8 @@ export default function(app) {
 		if (fileName.indexOf(':') >= 0) {
 			fileName = fileName.split(':')[1];
 		}
-		const Component = defineAsyncComponent(async () => import(/* @vite-ignore */fileName));
-		const Layout = defineAsyncComponent(async () => import(/* @vite-ignore */fileName + '__preview.vue'));
+		const Component = defineAsyncComponent(() => import(/* @vite-ignore */fileName));
+		const Layout = defineAsyncComponent(() => import(/* @vite-ignore */fileName + '__preview.vue'));
 		const Previewer = defineComponent({
 			setup: function () {
 				return () => h(Suspense, undefined, [h(Layout, undefined, {
@@ -50,28 +51,14 @@ export default function(app) {
 				})]);
 			},
 		});
-		// @ts-expect-error
 		app._component.setup = Previewer.setup;
 	}
 }`;
 			}
 			if (id.endsWith('__preview.vue')) {
 				const fileName = id.substring(0, id.length - '__preview.vue'.length);
-				let code = fs.readFileSync(fileName, 'utf-8');
-				// extract preview block content
-				code = removeHtmlComments(code);
-				const previewBlock = code.match(previewBlockReg);
-				if (previewBlock) {
-					const startTagEnd = previewBlock[0].indexOf('>') + 1;
-					const endTagStart = previewBlock[0].lastIndexOf('</');
-					code = previewBlock[0].substring(startTagEnd, endTagStart);
-					// @ts-expect-error
-					code = markdown.transform(code, 'foo.md');
-				}
-				else {
-					code = '';
-				}
-				return code;
+				const code = fs.readFileSync(fileName, 'utf-8');
+				return parsePreviewCode(code);
 			}
 		},
 		transform(code, id) {
@@ -82,17 +69,36 @@ export default function(app) {
 			return code;
 		},
 		handleHotUpdate(ctx) {
-			if (ctx.file.endsWith('.vue') && !ctx.file.endsWith('__preview.vue')) {
-				const previewModules = ctx.server.moduleGraph.getModulesByFile(
-					ctx.file + '__preview.vue'
-				);
-				if (previewModules) {
-					// TODO: check preview modules dirty
-					return [...previewModules];
-				}
+			if (proxyingHotUpdateFile === undefined && ctx.file.endsWith('.vue')) {
+				proxyingHotUpdateFile = ctx.file;
+				ctx.server.watcher.emit('change', ctx.file);
+				proxyingHotUpdateFile = undefined;
+			}
+			else if (proxyingHotUpdateFile === ctx.file) {
+				ctx.file = ctx.file + '__preview.vue';
+				ctx.modules = [...ctx.server.moduleGraph.getModulesByFile(ctx.file) ?? []];
+				const read = ctx.read;
+				ctx.read = async () => parsePreviewCode(await read());
 			}
 		},
 	};
+
+	function parsePreviewCode(code: string) {
+		// extract preview block content
+		code = removeHtmlComments(code);
+		const previewBlock = code.match(previewBlockReg);
+		if (previewBlock) {
+			const startTagEnd = previewBlock[0].indexOf('>') + 1;
+			const endTagStart = previewBlock[0].lastIndexOf('</');
+			code = previewBlock[0].substring(startTagEnd, endTagStart);
+			// @ts-expect-error
+			code = markdown.transform(code, 'foo.md');
+		}
+		else {
+			code = '';
+		}
+		return code;
+	}
 }
 
 function removeHtmlComments(htmlCode: string) {
