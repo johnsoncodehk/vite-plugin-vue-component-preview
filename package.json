@@ -11,6 +11,7 @@
 		"url": "https://github.com/johnsoncodehk/vite-plugin-vue-component-preview.git"
 	},
 	"devDependencies": {
+		"@types/node": "latest",
 		"typescript": "latest",
 		"vite": "latest"
 	},
