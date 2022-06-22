@@ -95,7 +95,7 @@ export default function(app) {
 			code = markdown.transform(code, 'foo.md');
 		}
 		else {
-			code = '';
+			code = '<template><slot /></template>';
 		}
 		return code;
 	}
