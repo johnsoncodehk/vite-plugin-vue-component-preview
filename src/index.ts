@@ -1,5 +1,6 @@
 import type { PluginOption } from 'vite';
 import Markdown from 'vite-plugin-vue-markdown';
+import * as fs from 'fs';
 
 export default function Preview(): PluginOption {
 
@@ -33,7 +34,7 @@ export default function(app) {
 		}
 
 		const Component = defineAsyncComponent(async () => import(fileName));
-		const Layout = defineAsyncComponent(async () => import(fileName + '?preview'));
+		const Layout = defineAsyncComponent(async () => import(fileName + '__preview.vue'));
 		const Previewer = defineComponent({
 			setup: function () {
 				return () => h(Suspense, undefined, [h(Layout, undefined, {
@@ -46,13 +47,9 @@ export default function(app) {
 	}
 }`;
 			}
-		},
-		transform(code, id) {
-			if (id.endsWith('.vue')) {
-				// remove preview block
-				code = code.replace(previewBlockReg, '');
-			}
-			else if (id.endsWith('.vue?preview')) {
+			if (id.endsWith('__preview.vue')) {
+				const fileName = id.substring(0, id.length - '__preview.vue'.length);
+				let code = fs.readFileSync(fileName, 'utf-8');
 				// extract preview block content
 				code = removeHtmlComments(code);
 				const previewBlock = code.match(previewBlockReg);
@@ -63,8 +60,27 @@ export default function(app) {
 					// @ts-expect-error
 					code = markdown.transform(code, 'foo.md');
 				}
+				else {
+					code = '';
+				}
+				return code;
+			}
+		},
+		transform(code, id) {
+			if (id.endsWith('.vue')) {
+				// remove preview block
+				code = code.replace(previewBlockReg, '');
 			}
 			return code;
+		},
+		handleHotUpdate(ctx) {
+			if (ctx.file.endsWith('.vue') && !ctx.file.endsWith('__preview.vue')) {
+				const previewModules = ctx.server.moduleGraph.getModulesByFile(ctx.file + '__preview.vue');
+				if (previewModules) {
+					// TODO: check previe modules dirty
+					return [...previewModules];
+				}
+			}
 		},
 	};
 }
