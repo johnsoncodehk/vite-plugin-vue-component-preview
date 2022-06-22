@@ -32,23 +32,40 @@ export default function Preview(): PluginOption {
 		load(id) {
 			if (id === resolvedVirtualModuleId) {
 				return `
-import { defineAsyncComponent, defineComponent, h, Suspense } from 'vue';
+import { defineAsyncComponent, defineComponent, h, Suspense, ref, computed } from 'vue';
+
 export default function(app) {
-	if (location.pathname === '/__preview') {
-		const url = new URL(location.href);
-		let fileName = url.hash.slice(1);
-		// fix windows path for vite
-		fileName = fileName.replace(/\\\\\\\\/g, '/');
-		if (fileName.indexOf(':') >= 0) {
-			fileName = fileName.split(':')[1];
-		}
-		const Component = defineAsyncComponent(() => import(/* @vite-ignore */fileName));
-		const Layout = defineAsyncComponent(() => import(/* @vite-ignore */fileName + '__preview.vue'));
+    if (location.pathname === '/__preview') {
 		const Previewer = defineComponent({
-			setup: function () {
-				return () => h(Suspense, undefined, [h(Layout, undefined, {
-					default: (props) => h(Component, props)
-				})]);
+			setup() {
+				window.addEventListener('hashchange', () => {
+					console.log('hashchange', location.href);
+					url.value = new URL(location.href);
+				});
+				const url = ref(new URL(location.href));
+				const fileName = computed(() => {
+					let fileName = url.value.hash.slice(1);
+					// fix windows path for vite
+					fileName = fileName.replace(/\\\\\\\\/g, '/');
+					if (fileName.indexOf(':') >= 0) {
+						fileName = fileName.split(':')[1];
+					}
+					console.log('new file', fileName);
+					return fileName;
+				});
+				const Component = computed(() => {
+					const _fileName = fileName.value;
+					return defineAsyncComponent(() => import(/* @vite-ignore */_fileName));
+				});
+				const Layout = computed(() => {
+					const _fileName = fileName.value;
+					return defineAsyncComponent(() => import(/* @vite-ignore */_fileName + '__preview.vue'));
+				});
+				return () => h(Suspense, undefined, [
+					h(Layout.value, undefined, {
+						default: (props) => h(Component.value, props)
+					})
+				]);
 			},
 		});
 		app._component.setup = Previewer.setup;
