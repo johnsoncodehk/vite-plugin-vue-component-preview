@@ -77,7 +77,7 @@ export default function(app) {
 			if (ctx.file.endsWith('.vue') && !ctx.file.endsWith('__preview.vue')) {
 				const previewModules = ctx.server.moduleGraph.getModulesByFile(ctx.file + '__preview.vue');
 				if (previewModules) {
-					// TODO: check previe modules dirty
+					// TODO: check preview modules dirty
 					return [...previewModules];
 				}
 			}
