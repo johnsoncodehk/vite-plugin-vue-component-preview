@@ -1,7 +1,7 @@
 import type { PluginOption, ViteDevServer } from 'vite';
 import Markdown from 'vite-plugin-vue-markdown';
 import * as fs from 'fs';
-import path from 'path';
+import * as path from 'path';
 
 export default function Preview(): PluginOption {
 	const markdown = Markdown();
