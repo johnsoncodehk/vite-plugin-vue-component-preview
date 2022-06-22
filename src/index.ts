@@ -1,40 +1,48 @@
-import type { PluginOption } from 'vite';
+import type { PluginOption, ViteDevServer } from 'vite';
 import Markdown from 'vite-plugin-vue-markdown';
 import * as fs from 'fs';
+import path from 'path';
 
 export default function Preview(): PluginOption {
-
 	const markdown = Markdown();
 	const previewBlockReg = /\<(preview)[\s\S]*?\>([\s\S]*?)\<\/\1\>/g;
 	const virtualModuleId = 'virtual:vue-component-preview';
 	const resolvedVirtualModuleId = '\0' + virtualModuleId;
 
+	let server: ViteDevServer;
+
 	return {
 		name: 'vite-plugin-vue-component-preview',
+		configureServer(_server) {
+			server = _server;
+		},
 		resolveId(id) {
 			if (id === virtualModuleId) {
 				return resolvedVirtualModuleId;
+			}
+			const cleanId = id.replace(/\?.*$/, '');
+			if (
+				cleanId.endsWith('__preview.vue') &&
+				!cleanId.startsWith(server.config.root)
+			) {
+				return path.join(server.config.root, id);
 			}
 		},
 		load(id) {
 			if (id === resolvedVirtualModuleId) {
 				return `
 import { defineAsyncComponent, defineComponent, h, Suspense } from 'vue';
-
 export default function(app) {
 	if (location.pathname === '/__preview') {
-
 		const url = new URL(location.href);
 		let fileName = url.hash.slice(1);
-
 		// fix windows path for vite
 		fileName = fileName.replace(/\\\\\\\\/g, '/');
 		if (fileName.indexOf(':') >= 0) {
 			fileName = fileName.split(':')[1];
 		}
-
-		const Component = defineAsyncComponent(async () => import(fileName));
-		const Layout = defineAsyncComponent(async () => import(fileName + '__preview.vue'));
+		const Component = defineAsyncComponent(async () => import(/* @vite-ignore */fileName));
+		const Layout = defineAsyncComponent(async () => import(/* @vite-ignore */fileName + '__preview.vue'));
 		const Previewer = defineComponent({
 			setup: function () {
 				return () => h(Suspense, undefined, [h(Layout, undefined, {
@@ -75,7 +83,9 @@ export default function(app) {
 		},
 		handleHotUpdate(ctx) {
 			if (ctx.file.endsWith('.vue') && !ctx.file.endsWith('__preview.vue')) {
-				const previewModules = ctx.server.moduleGraph.getModulesByFile(ctx.file + '__preview.vue');
+				const previewModules = ctx.server.moduleGraph.getModulesByFile(
+					ctx.file + '__preview.vue'
+				);
 				if (previewModules) {
 					// TODO: check preview modules dirty
 					return [...previewModules];
