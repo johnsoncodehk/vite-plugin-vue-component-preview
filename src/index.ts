@@ -36,37 +36,34 @@ import { defineAsyncComponent, defineComponent, h, Suspense, ref, computed } fro
 
 export default function(app) {
 	if (location.pathname === '/__preview') {
-		const Previewer = defineComponent({
-			setup() {
-				window.addEventListener('hashchange', () => {
-					url.value = new URL(location.href);
-				});
-				const url = ref(new URL(location.href));
-				const fileName = computed(() => {
-					let fileName = url.value.hash.slice(1);
-					// fix windows path for vite
-					fileName = fileName.replace(/\\\\\\\\/g, '/');
-					if (fileName.indexOf(':') >= 0) {
-						fileName = fileName.split(':')[1];
-					}
-					return fileName;
-				});
-				const Component = computed(() => {
-					const _fileName = fileName.value;
-					return defineAsyncComponent(() => import(/* @vite-ignore */_fileName));
-				});
-				const Layout = computed(() => {
-					const _fileName = fileName.value;
-					return defineAsyncComponent(() => import(/* @vite-ignore */_fileName + '__preview.vue'));
-				});
-				return () => h(Suspense, undefined, [
-					h(Layout.value, undefined, {
-						default: (props) => h(Component.value, props)
-					})
-				]);
-			},
-		});
-		app._component.setup = Previewer.setup;
+		app._component.setup = () => {
+			window.addEventListener('hashchange', () => {
+				url.value = new URL(location.href);
+			});
+			const url = ref(new URL(location.href));
+			const fileName = computed(() => {
+				let fileName = url.value.hash.slice(1);
+				// fix windows path for vite
+				fileName = fileName.replace(/\\\\\\\\/g, '/');
+				if (fileName.indexOf(':') >= 0) {
+					fileName = fileName.split(':')[1];
+				}
+				return fileName;
+			});
+			const Component = computed(() => {
+				const _fileName = fileName.value;
+				return defineAsyncComponent(() => import(/* @vite-ignore */_fileName));
+			});
+			const Layout = computed(() => {
+				const _fileName = fileName.value;
+				return defineAsyncComponent(() => import(/* @vite-ignore */_fileName + '__preview.vue'));
+			});
+			return () => h(Suspense, undefined, [
+				h(Layout.value, undefined, {
+					default: (props) => h(Component.value, props)
+				})
+			]);
+		};
 	}
 }`;
 			}
