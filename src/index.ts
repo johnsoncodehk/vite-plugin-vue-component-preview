@@ -35,11 +35,10 @@ export default function Preview(): PluginOption {
 import { defineAsyncComponent, defineComponent, h, Suspense, ref, computed } from 'vue';
 
 export default function(app) {
-    if (location.pathname === '/__preview') {
+	if (location.pathname === '/__preview') {
 		const Previewer = defineComponent({
 			setup() {
 				window.addEventListener('hashchange', () => {
-					console.log('hashchange', location.href);
 					url.value = new URL(location.href);
 				});
 				const url = ref(new URL(location.href));
@@ -50,7 +49,6 @@ export default function(app) {
 					if (fileName.indexOf(':') >= 0) {
 						fileName = fileName.split(':')[1];
 					}
-					console.log('new file', fileName);
 					return fileName;
 				});
 				const Component = computed(() => {
