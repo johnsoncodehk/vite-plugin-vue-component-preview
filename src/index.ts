@@ -82,9 +82,11 @@ export default function(app) {
 		},
 		handleHotUpdate(ctx) {
 			if (proxyingHotUpdateFile === undefined && ctx.file.endsWith('.vue')) {
-				proxyingHotUpdateFile = ctx.file;
-				ctx.server.watcher.emit('change', ctx.file);
-				proxyingHotUpdateFile = undefined;
+				setTimeout(() => {
+					proxyingHotUpdateFile = ctx.file;
+					ctx.server.watcher.emit('change', ctx.file);
+					proxyingHotUpdateFile = undefined;
+				}, 100);
 			}
 			else if (proxyingHotUpdateFile === ctx.file) {
 				ctx.file = ctx.file + '__preview.vue';
