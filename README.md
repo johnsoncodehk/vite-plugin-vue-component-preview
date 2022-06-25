@@ -82,10 +82,16 @@ const msgs = [
 	<slot :msg="msg"></slot>
 </template>
 
+<style>
+body {
+	background-color: green;
+}
+</style>
+
 </preview>
 ```
 
-Open http://localhost:3000/__preview#absolute_path_to_component/HelloWorld.vue to see the result.
+Open http://localhost:3000/__preview/src/HelloWorld.vue to see the result.
 
 ## Sponsors
 

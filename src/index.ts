@@ -16,6 +16,12 @@ export default function Preview(): PluginOption {
 		name: 'vite-plugin-vue-component-preview',
 		configureServer(_server) {
 			server = _server;
+			server.middlewares.use((req, res, next) => {
+				if (req.url?.startsWith('/__preview/')) {
+					req.url = '/__preview';
+				}
+				next();
+			});
 		},
 		resolveId(id) {
 			if (id === virtualModuleId) {
@@ -32,30 +38,22 @@ export default function Preview(): PluginOption {
 		load(id) {
 			if (id === resolvedVirtualModuleId) {
 				return `
-import { defineAsyncComponent, defineComponent, h, Suspense, ref, computed } from 'vue';
+import { defineAsyncComponent, h, Suspense, ref, computed } from 'vue';
 
-export default function(app) {
-	if (location.pathname === '/__preview') {
+export default function (app) {
+	if (location.pathname.startsWith('/__preview/')) {
 		app._component.setup = () => {
 			window.addEventListener('hashchange', () => {
-				url.value = new URL(location.href);
+				pathname.value = location.pathname;
 			});
-			const url = ref(new URL(location.href));
-			const fileName = computed(() => {
-				let fileName = url.value.hash.slice(1);
-				// fix windows path for vite
-				fileName = fileName.replace(/\\\\\\\\/g, '/');
-				if (fileName.indexOf(':') >= 0) {
-					fileName = fileName.split(':')[1];
-				}
-				return fileName;
-			});
+			const pathname = ref(location.pathname);
+			const importPath = computed(() => '/' + pathname.value.substring('/__preview/'.length));
 			const Component = computed(() => {
-				const _fileName = fileName.value;
+				const _fileName = importPath.value;
 				return defineAsyncComponent(() => import(/* @vite-ignore */_fileName));
 			});
 			const Layout = computed(() => {
-				const _fileName = fileName.value;
+				const _fileName = importPath.value;
 				return defineAsyncComponent(() => import(/* @vite-ignore */_fileName + '__preview.vue'));
 			});
 			return () => h(Suspense, undefined, [
