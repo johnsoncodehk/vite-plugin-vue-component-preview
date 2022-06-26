@@ -26,8 +26,10 @@ export default function Preview(): PluginOption {
 			});
 			server.ws.on('vue-component-preview:hash', (data: { file: string, text: string; }) => {
 				data.file = path.join(server.config.root, data.file);
-				fileHashs[data.file] = data.text;
-				server.watcher.emit('change', data.file);
+				if ((fileHashs[data.file] ?? '') !== data.text) {
+					fileHashs[data.file] = data.text;
+					server.watcher.emit('change', data.file);
+				}
 			});
 		},
 		resolveId(id) {
