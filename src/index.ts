@@ -4,10 +4,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export default function Preview(): PluginOption {
+
 	const markdown = Markdown();
 	const previewBlockReg = /\<(preview)[\s\S]*?\>([\s\S]*?)\<\/\1\>/g;
 	const virtualModuleId = 'virtual:vue-component-preview';
 	const resolvedVirtualModuleId = '\0' + virtualModuleId;
+	const fileHashs: Record<string, string> = {};
 
 	let server: ViteDevServer;
 	let proxyingHotUpdateFile: string | undefined;
@@ -18,9 +20,14 @@ export default function Preview(): PluginOption {
 			server = _server;
 			server.middlewares.use((req, res, next) => {
 				if (req.url?.startsWith('/__preview/')) {
-					req.url = '/__preview';
+					req.url = '/'; // avoid 404
 				}
 				next();
+			});
+			server.ws.on('vue-component-preview:hash', (data: { file: string, text: string; }) => {
+				data.file = path.join(server.config.root, data.file);
+				fileHashs[data.file] = data.text;
+				server.watcher.emit('change', data.file);
 			});
 		},
 		resolveId(id) {
@@ -43,11 +50,8 @@ import { defineAsyncComponent, h, Suspense, ref, computed } from 'vue';
 export default function (app) {
 	if (location.pathname.startsWith('/__preview/')) {
 		app._component.setup = () => {
-			window.addEventListener('hashchange', () => {
-				pathname.value = location.pathname;
-			});
 			const pathname = ref(location.pathname);
-			const importPath = computed(() => '/' + pathname.value.substring('/__preview/'.length));
+			const importPath = computed(() => pathname.value.substring('/__preview'.length));
 			const Component = computed(() => {
 				const _fileName = importPath.value;
 				return defineAsyncComponent(() => import(/* @vite-ignore */_fileName));
@@ -56,6 +60,18 @@ export default function (app) {
 				const _fileName = importPath.value;
 				return defineAsyncComponent(() => import(/* @vite-ignore */_fileName + '__preview.vue'));
 			});
+			if (import.meta.hot) {
+				import.meta.hot.send('vue-component-preview:hash', {
+					file: importPath.value,
+					text: location.hash ? atob(location.hash.substring(1)) : '',
+				});
+				window.addEventListener('hashchange', () => {
+					import.meta.hot.send('vue-component-preview:hash', {
+						file: importPath.value,
+						text: location.hash ? atob(location.hash.substring(1)) : '',
+					});
+				});
+			}
 			return () => h(Suspense, undefined, [
 				h(Layout.value, undefined, {
 					default: (props) => h(Component.value, props)
@@ -67,11 +83,14 @@ export default function (app) {
 			}
 			if (id.endsWith('__preview.vue')) {
 				const fileName = id.substring(0, id.length - '__preview.vue'.length);
-				const code = fs.readFileSync(fileName, 'utf-8');
+				const code = fileHashs[fileName] || fs.readFileSync(fileName, 'utf-8');
 				return parsePreviewCode(code);
 			}
 		},
 		transform(code, id) {
+			if (fileHashs[id]) {
+				code = fileHashs[id];
+			}
 			if (id.endsWith('.vue')) {
 				// remove preview block
 				code = code.replace(previewBlockReg, '');
@@ -87,10 +106,11 @@ export default function (app) {
 				}, 100);
 			}
 			else if (proxyingHotUpdateFile === ctx.file) {
+				const originalFile = ctx.file;
 				ctx.file = ctx.file + '__preview.vue';
 				ctx.modules = [...ctx.server.moduleGraph.getModulesByFile(ctx.file) ?? []];
 				const read = ctx.read;
-				ctx.read = async () => parsePreviewCode(await read());
+				ctx.read = async () => parsePreviewCode(fileHashs[originalFile] || await read());
 			}
 		},
 	};
@@ -104,7 +124,7 @@ export default function (app) {
 			const endTagStart = previewBlock[0].lastIndexOf('</');
 			code = previewBlock[0].substring(startTagEnd, endTagStart);
 			// @ts-expect-error
-			code = markdown.transform(code, 'foo.md');
+			code = markdown.transform(code, '/foo.md');
 		}
 		else {
 			code = '<template><slot /></template>';
