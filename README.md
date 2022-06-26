@@ -2,44 +2,48 @@
 
 This Vite plugin support `<preview lang="md">` custom block in SFC for preview single Vue component.
 
-## Usage
+## Setup
 
-*vite.config.ts*
+1. Install [vite-plugin-vue-component-preview](https://github.com/johnsoncodehk/vite-plugin-vue-component-preview)
+  ```sh
+    $ npm install -D vite-plugin-vue-component-preview
+  ```
+  ```sh
+    $ yarn add -D vite-plugin-vue-component-preview
+  ```
+  ```sh
+    $ pnpm install -D vite-plugin-vue-component-preview
+  ```
+2. Add the plugin to your **vite.config.ts**
+  ```ts{3,7}
+    import { defineConfig } from 'vite';
+    import Vue from '@vitejs/plugin-vue';
+    import Preview from 'vite-plugin-vue-component-preview';
 
-```ts
-import { defineConfig } from 'vite';
-import Vue from '@vitejs/plugin-vue';
-import Preview from 'vite-plugin-vue-component-preview';
+    export default defineConfig({
+      plugins: [
+        Preview(),
+        Vue(),
+      ],
+    })
+  ```
+3. Add new types to your **tsconfig.json**
+  ```json
+    {
+      "compilerOptions": {
+        "types": ["vite-plugin-vue-component-preview/client"]
+      }
+    }
+  ```
+4. Include the plugin in your vue app
+  ```ts{3,6}
+  import { createApp } from 'vue';
+  import App from './App.vue';
+  import Previewer from 'virtual:vue-component-preview';
 
-export default defineConfig({
-	plugins: [
-		Preview(),
-		Vue(),
-	],
-})
-```
-
-*tsconfig.json*
-
-```jsonc
-{
-	"compilerOptions": {
-		"types": ["vite-plugin-vue-component-preview/client"]
-	}
-}
-```
-
-*src/main.ts*
-
-```ts
-import { createApp } from 'vue';
-import App from './App.vue';
-import Previewer from 'virtual:vue-component-preview';
-
-const app = createApp(App);
-app.use(Previewer);
-// ...
-```
+  const app = createApp(App);
+  app.use(Previewer);
+  ```
 
 ## Example
 
