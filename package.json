@@ -3,7 +3,8 @@
 	"version": "0.2.0",
 	"license": "MIT",
 	"files": [
-		"out"
+		"out",
+		"client.d.ts"
 	],
 	"main": "out/index.js",
 	"repository": {
