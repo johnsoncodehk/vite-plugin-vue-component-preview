@@ -17,6 +17,6 @@
 		"vite": "latest"
 	},
 	"dependencies": {
-		"vite-plugin-vue-markdown": "^0.1.1"
+		"vite-plugin-vue-markdown": "^0.21.1"
 	}
 }
