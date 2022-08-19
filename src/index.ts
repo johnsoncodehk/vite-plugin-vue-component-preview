@@ -3,7 +3,7 @@ import Markdown from 'vite-plugin-vue-markdown';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export default function Preview(): PluginOption {
+export = function Preview(): PluginOption {
 
 	const markdown = Markdown();
 	const previewBlockReg = /\<(preview)[\s\S]*?\>([\s\S]*?)\<\/\1\>/g;
@@ -133,7 +133,7 @@ export default function (app) {
 		}
 		return code;
 	}
-}
+};
 
 function removeHtmlComments(htmlCode: string) {
 	const htmlCommentRege = /<!--[\s\S]*?-->/g;
