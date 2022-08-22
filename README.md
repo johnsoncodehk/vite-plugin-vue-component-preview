@@ -54,7 +54,7 @@ This Vite plugin support `<preview lang="md">` custom block in SFC for preview s
 	<button @click="count++">count is: {{ count }}</button>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
 defineProps<{ msg: string }>()
