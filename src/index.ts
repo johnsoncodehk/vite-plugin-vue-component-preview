@@ -117,7 +117,7 @@ export default function (app) {
 		},
 	};
 
-	function parsePreviewCode(code: string) {
+	async function parsePreviewCode(code: string) {
 		// extract preview block content
 		code = removeHtmlComments(code);
 		const previewBlock = code.match(previewBlockReg);
@@ -125,8 +125,17 @@ export default function (app) {
 			const startTagEnd = previewBlock[0].indexOf('>') + 1;
 			const endTagStart = previewBlock[0].lastIndexOf('</');
 			code = previewBlock[0].substring(startTagEnd, endTagStart);
-			// @ts-expect-error
-			code = markdown.transform(code, '/foo.md');
+
+			const parsed = await markdown.transform?.call({} as any, code, '/foo.md');
+			if (typeof parsed === 'object' && parsed?.code) {
+				code = parsed.code;
+			}
+			else if (typeof parsed === 'string') {
+				code = parsed;
+			}
+			else {
+				code = '<template><slot /></template>';
+			}
 		}
 		else {
 			code = '<template><slot /></template>';
