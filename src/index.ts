@@ -50,7 +50,8 @@ export = function Preview(): PluginOption {
 import { defineAsyncComponent, h, Suspense, ref, computed } from 'vue';
 
 export default function (app) {
-	if (location.pathname.startsWith('/__preview/')) {
+	const location = globalThis.location;
+	if (location && location.pathname.startsWith('/__preview/')) {
 		app._component.setup = () => {
 			const pathname = ref(location.pathname);
 			const importPath = computed(() => pathname.value.substring('/__preview'.length));
