@@ -1,6 +1,6 @@
 {
 	"name": "vite-plugin-vue-component-preview",
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"license": "MIT",
 	"files": [
 		"out",
