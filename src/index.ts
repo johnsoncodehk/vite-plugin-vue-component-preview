@@ -105,10 +105,10 @@ export default function (app) {
 				setTimeout(() => {
 					proxyingHotUpdateFile = ctx.file;
 					ctx.server.watcher.emit('change', ctx.file);
-					proxyingHotUpdateFile = undefined;
 				}, 100);
 			}
 			else if (proxyingHotUpdateFile === ctx.file) {
+				proxyingHotUpdateFile = undefined;
 				const originalFile = ctx.file;
 				ctx.file = ctx.file + '__preview.vue';
 				ctx.modules = [...ctx.server.moduleGraph.getModulesByFile(ctx.file) ?? []];
