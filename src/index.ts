@@ -64,15 +64,19 @@ export default function (app) {
 				return defineAsyncComponent(() => import(/* @vite-ignore */_fileName + '__preview.vue'));
 			});
 			if (import.meta.hot) {
-				import.meta.hot.send('vue-component-preview:hash', {
-					file: importPath.value,
-					text: location.hash ? atob(location.hash.substring(1)) : '',
-				});
-				window.addEventListener('hashchange', () => {
+				try {
 					import.meta.hot.send('vue-component-preview:hash', {
 						file: importPath.value,
 						text: location.hash ? atob(location.hash.substring(1)) : '',
 					});
+				} catch { }
+				window.addEventListener('hashchange', () => {
+					try {
+						import.meta.hot.send('vue-component-preview:hash', {
+							file: importPath.value,
+							text: location.hash ? atob(location.hash.substring(1)) : '',
+						});
+					} catch { }
 				});
 			}
 			return () => h(Suspense, undefined, [
