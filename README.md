@@ -95,7 +95,7 @@ body {
 </preview>
 ```
 
-Open http://localhost:3000/__preview/src/HelloWorld.vue to see the result.
+Example repo: https://github.com/johnsoncodehk/volar-starter (Open http://localhost:3000/__preview/src/components/HelloWorld.vue to see the result.)
 
 ## Sponsors
 
