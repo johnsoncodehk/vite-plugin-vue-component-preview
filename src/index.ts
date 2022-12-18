@@ -2,6 +2,7 @@ import type { PluginOption, ViteDevServer } from 'vite';
 import Markdown from 'vite-plugin-vue-markdown';
 import * as fs from 'fs';
 import * as path from 'path';
+import MagicString from 'magic-string';
 
 export = function Preview(): PluginOption {
 
@@ -95,14 +96,18 @@ export default function (app) {
 			}
 		},
 		transform(code, id) {
-			if (fileHashs[id]) {
-				code = fileHashs[id];
+			let str = new MagicString(code);
+			if (fileHashs[id] && fileHashs[id] !== str.toString()) {
+				str = str.overwrite(0, str.length(), fileHashs[id]);
 			}
 			if (id.endsWith('.vue')) {
 				// remove preview block
-				code = code.replace(previewBlockReg, '');
+				str = str.replaceAll(previewBlockReg, '');
 			}
-			return code;
+			return {
+				code: str.toString(),
+				map: str.generateMap(),
+			};
 		},
 		handleHotUpdate(ctx) {
 			if (proxyingHotUpdateFile === undefined && ctx.file.endsWith('.vue')) {
@@ -131,7 +136,7 @@ export default function (app) {
 			const endTagStart = previewBlock[0].lastIndexOf('</');
 			code = previewBlock[0].substring(startTagEnd, endTagStart);
 
-			const parsed = await markdown.transform?.call({} as any, code, '/foo.md');
+			const parsed = await (markdown.transform as Function)?.call({} as any, code, '/foo.md');
 			if (typeof parsed === 'object' && parsed?.code) {
 				code = parsed.code;
 			}

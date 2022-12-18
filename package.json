@@ -17,6 +17,7 @@
 		"vite": "latest"
 	},
 	"dependencies": {
+		"magic-string": "^0.27.0",
 		"vite-plugin-vue-markdown": "^0.22.1"
 	}
 }
