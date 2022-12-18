@@ -2,6 +2,8 @@
 
 This Vite plugin support `<preview lang="md">` custom block in SFC for preview single Vue component.
 
+To use this with VSCode + Volar, see https://github.com/johnsoncodehk/volar/discussions/1511
+
 ## Setup
 
 1. Install [vite-plugin-vue-component-preview](https://github.com/johnsoncodehk/vite-plugin-vue-component-preview)
