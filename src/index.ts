@@ -91,8 +91,15 @@ export default function (app) {
 			}
 			if (id.endsWith('__preview.vue')) {
 				const fileName = id.substring(0, id.length - '__preview.vue'.length);
-				const code = fileHashs[fileName] || fs.readFileSync(fileName, 'utf-8');
-				return parsePreviewCode(code);
+				if (fileName in fileHashs) {
+					return parsePreviewCode(fileHashs[fileName]);
+				}
+				if (fs.existsSync(fileName)) {
+					return parsePreviewCode(fs.readFileSync(fileName, 'utf-8'));
+				}
+				else {
+					console.warn(`[vite-plugin-vue-component-preview] ${fileName} not found`);
+				}
 			}
 		},
 		transform(code, id) {
