@@ -6,38 +6,31 @@ To use this with VSCode + Volar, see https://github.com/johnsoncodehk/volar/disc
 
 ## Setup
 
-1. Install [vite-plugin-vue-component-preview](https://github.com/johnsoncodehk/vite-plugin-vue-component-preview)
-  ```sh
-    $ npm install -D vite-plugin-vue-component-preview
-  ```
-  ```sh
-    $ yarn add -D vite-plugin-vue-component-preview
-  ```
-  ```sh
-    $ pnpm install -D vite-plugin-vue-component-preview
-  ```
-2. Add the plugin to your **vite.config.ts**
-  ```ts{3,7}
-    import { defineConfig } from 'vite';
-    import Vue from '@vitejs/plugin-vue';
-    import Preview from 'vite-plugin-vue-component-preview';
+`vite.config.ts`
 
-    export default defineConfig({
-      plugins: [
-        Preview(),
-        Vue(),
-      ],
-    })
-  ```
-3. Include the plugin in your vue app
-  ```ts{3,6}
-  import { createApp } from 'vue';
-  import App from './App.vue';
-  import Previewer from 'vite-plugin-vue-component-preview/client';
+```ts
+import { defineConfig } from 'vite';
+import Vue from '@vitejs/plugin-vue';
+import Preview from 'vite-plugin-vue-component-preview';
 
-  const app = createApp(App);
-  app.use(Previewer);
-  ```
+export default defineConfig({
+	plugins: [
+	Preview(),
+	Vue(),
+	],
+})
+```
+
+`main.ts`
+
+```ts
+import { createApp } from 'vue';
+import App from './App.vue';
+import Previewer from 'vite-plugin-vue-component-preview/client';
+
+const app = createApp(App);
+app.use(Previewer);
+```
 
 ## Example
 
