@@ -29,19 +29,11 @@ To use this with VSCode + Volar, see https://github.com/johnsoncodehk/volar/disc
       ],
     })
   ```
-3. Add new types to your **tsconfig.json**
-  ```json
-    {
-      "compilerOptions": {
-        "types": ["vite-plugin-vue-component-preview/client"]
-      }
-    }
-  ```
-4. Include the plugin in your vue app
+3. Include the plugin in your vue app
   ```ts{3,6}
   import { createApp } from 'vue';
   import App from './App.vue';
-  import Previewer from 'virtual:vue-component-preview';
+  import Previewer from 'vite-plugin-vue-component-preview/client';
 
   const app = createApp(App);
   app.use(Previewer);

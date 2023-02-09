@@ -3,10 +3,10 @@
 	"version": "0.3.4",
 	"license": "MIT",
 	"files": [
-		"out",
-		"client.d.ts"
+		"client",
+		"*.js",
+		"*.d.ts"
 	],
-	"main": "out/index.js",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/johnsoncodehk/vite-plugin-vue-component-preview.git"
@@ -14,10 +14,14 @@
 	"devDependencies": {
 		"@types/node": "latest",
 		"typescript": "latest",
-		"vite": "latest"
+		"vite": "latest",
+		"vue": "latest"
 	},
 	"dependencies": {
 		"magic-string": "^0.27.0",
-		"vite-plugin-vue-markdown": "^0.22.1"
+		"vite-plugin-vue-markdown": "^0.22.4"
+	},
+	"peerDependencies": {
+		"vue": ">=3.0.0"
 	}
 }
