@@ -21,7 +21,7 @@
 			"path": "./client/tsconfig.json"
 		},
 		{
-			"path": "./volar/tsconfig.json"
+			"path": "./tooling/tsconfig.json"
 		},
 	]
 }

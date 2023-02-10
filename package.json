@@ -3,9 +3,8 @@
 	"version": "0.3.4",
 	"license": "MIT",
 	"files": [
-		"client",
-		"*.js",
-		"*.d.ts"
+		"**/*.js",
+		"**/*.d.ts"
 	],
 	"repository": {
 		"type": "git",
