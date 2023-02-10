@@ -10,13 +10,13 @@ To use this with VSCode + Volar, see https://github.com/johnsoncodehk/volar/disc
 
 ```ts
 import { defineConfig } from 'vite';
-import Vue from '@vitejs/plugin-vue';
-import Preview from 'vite-plugin-vue-component-preview';
+import vue from '@vitejs/plugin-vue';
+import preview from 'vite-plugin-vue-component-preview';
 
 export default defineConfig({
 	plugins: [
-	Preview(),
-	Vue(),
+		preview(),
+		vue(),
 	],
 })
 ```
@@ -26,10 +26,10 @@ export default defineConfig({
 ```ts
 import { createApp } from 'vue';
 import App from './App.vue';
-import Previewer from 'vite-plugin-vue-component-preview/client';
+import Preview from 'vite-plugin-vue-component-preview/client';
 
 const app = createApp(App);
-app.use(Previewer);
+app.use(Preview);
 ```
 
 `tsconfig.json` (For IDE and vue-tsc support)
