@@ -41,8 +41,9 @@ export default function (): Plugin {
 				cleanId.endsWith('__preview.vue') &&
 				!cleanId.startsWith(server.config.root)
 			) {
-				return path.join(server.config.root, id);
+				id = path.join(server.config.root, id);
 			}
+			return id;
 		},
 		load(id) {
 			if (id.endsWith('__preview.vue')) {
