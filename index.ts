@@ -34,8 +34,8 @@ export default function (): Plugin {
 		resolveId(id) {
 			if (id.startsWith('/__skip_vite/')) {
 				// handle for nuxt
-                id = path.join(server.config.root, id.substring('/__skip_vite/'.length));
-            }
+				id = path.join(server.config.root, id.substring('/__skip_vite/'.length));
+			}
 			const cleanId = id.replace(/\?.*$/, '');
 			if (
 				cleanId.endsWith('__preview.vue') &&
