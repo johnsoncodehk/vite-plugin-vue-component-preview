@@ -20,20 +20,8 @@ export default function (app: App) {
 			});
 
 			if (import.meta.hot) {
-				try {
-					import.meta.hot.send('vue-component-preview:hash', {
-						file: importPath.value,
-						text: location.hash ? atob(location.hash.substring(1)) : '',
-					});
-				} catch { }
-				window.addEventListener('hashchange', () => {
-					try {
-						import.meta.hot!.send('vue-component-preview:hash', {
-							file: importPath.value,
-							text: location.hash ? atob(location.hash.substring(1)) : '',
-						});
-					} catch { }
-				});
+				fireHash();
+				window.addEventListener('hashchange', fireHash);
 			}
 
 			return () => h(Suspense, undefined, [
@@ -41,6 +29,15 @@ export default function (app: App) {
 					default: (props: any) => h(Component.value, props)
 				})
 			]);
+
+			function fireHash() {
+				try {
+					import.meta.hot?.send('vue-component-preview:hash', {
+						file: importPath.value,
+						text: location.hash ? atob(location.hash.substring(1)) : '',
+					});
+				} catch { }
+			}
 		};
 	}
 }

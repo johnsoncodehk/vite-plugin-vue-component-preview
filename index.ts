@@ -32,6 +32,10 @@ export default function (): Plugin {
 			});
 		},
 		resolveId(id) {
+			if (id.startsWith('/__skip_vite/')) {
+				// handle for nuxt
+                id = path.join(server.config.root, id.substring('/__skip_vite/'.length));
+            }
 			const cleanId = id.replace(/\?.*$/, '');
 			if (
 				cleanId.endsWith('__preview.vue') &&
@@ -43,7 +47,7 @@ export default function (): Plugin {
 		load(id) {
 			if (id.endsWith('__preview.vue')) {
 				const fileName = id.substring(0, id.length - '__preview.vue'.length);
-				if (fileName in fileHash) {
+				if (fileHash[fileName]) {
 					return parsePreviewCode(fileHash[fileName]);
 				}
 				if (fs.existsSync(fileName)) {
