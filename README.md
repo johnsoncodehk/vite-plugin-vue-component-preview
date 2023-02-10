@@ -32,6 +32,16 @@ const app = createApp(App);
 app.use(Previewer);
 ```
 
+`tsconfig.json` (For IDE and vue-tsc support)
+
+```json
+{
+  "vueCompilerOptions": {
+    "plugins": ["vite-plugin-vue-component-preview/tooling"]
+  }
+}
+```
+
 ## Example
 
 ```html

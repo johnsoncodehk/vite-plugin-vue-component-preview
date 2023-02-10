@@ -14,11 +14,14 @@
 		]
 	},
 	"include": [
-		"./index.ts"
+		"./index.ts",
 	],
 	"references": [
 		{
 			"path": "./client/tsconfig.json"
-		}
+		},
+		{
+			"path": "./volar/tsconfig.json"
+		},
 	]
 }
