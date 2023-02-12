@@ -1,4 +1,4 @@
-import { App, computed, defineAsyncComponent, DefineComponent, h, ref, Suspense } from 'vue';
+import { App, defineAsyncComponent, DefineComponent, h } from 'vue';
 
 export default function (app: App) {
 
@@ -8,32 +8,23 @@ export default function (app: App) {
 
 		(app._component as DefineComponent).setup = () => {
 
-			const pathname = ref(location.pathname);
-			const importPath = computed(() => pathname.value.substring('/__preview'.length));
-			const Component = computed(() => {
-				const _fileName = importPath.value;
-				return defineAsyncComponent(() => import(/* @vite-ignore */_fileName));
-			});
-			const Layout = computed(() => {
-				const _fileName = importPath.value;
-				return defineAsyncComponent(() => import(/* @vite-ignore */_fileName + '__preview.vue'));
-			});
+			const importPath = location.pathname.substring('/__preview'.length);
+			const Component = defineAsyncComponent(() => import(/* @vite-ignore */importPath));
+			const Layout = defineAsyncComponent(() => import(/* @vite-ignore */importPath + '__preview.vue'));
 
 			if (import.meta.hot) {
 				fireHash();
 				window.addEventListener('hashchange', fireHash);
 			}
 
-			return () => h(Suspense, undefined, [
-				h(Layout.value, undefined, {
-					default: (props: any) => h(Component.value, props)
-				})
-			]);
+			return () => h(Layout, undefined, {
+				default: (props: any) => h(Component, props)
+			});
 
 			function fireHash() {
 				try {
 					import.meta.hot?.send('vue-component-preview:hash', {
-						file: importPath.value,
+						file: importPath,
 						text: location.hash ? atob(location.hash.substring(1)) : '',
 					});
 				} catch { }
