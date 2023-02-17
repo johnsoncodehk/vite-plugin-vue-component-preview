@@ -4,7 +4,7 @@ import * as path from 'path';
 import type { Plugin, ViteDevServer } from 'vite';
 import Markdown from 'vite-plugin-vue-markdown';
 
-export default function (): Plugin {
+export default function vuePreviewPlugin(): Plugin {
 
 	const markdown = Markdown();
 	const previewBlockReg = /\<(preview)[\s\S]*?\>([\s\S]*?)\<\/\1\>/g;
