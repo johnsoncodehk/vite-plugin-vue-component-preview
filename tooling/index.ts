@@ -20,9 +20,7 @@ const plugin: VueLanguagePlugin = (ctx) => {
 				else {
 					vueFile.update(snapshot);
 				}
-				return vueFile.embeddedFiles
-					.map(file => file.fileName)
-					.filter(fileName => !fileName.endsWith('.html'));
+				return vueFile.embeddedFiles.map(file => file.fileName);
 			}
 			return [];
 		},
