@@ -4,7 +4,8 @@
 	"license": "MIT",
 	"files": [
 		"**/*.js",
-		"**/*.d.ts"
+		"**/*.d.ts",
+		"tooling/package.json"
 	],
 	"type": "module",
 	"repository": {
