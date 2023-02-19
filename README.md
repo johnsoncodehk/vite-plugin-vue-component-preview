@@ -62,32 +62,33 @@ const count = ref(0)
 <!-- Preview part -->
 
 <preview lang="md">
-# This is preview page of HelloWorld.vue
 
-## Props
+	# This is preview page of HelloWorld.vue
 
-| Props       | Description    |
-| ----------- | -------------- |
-| msg         | Title message  |
+	## Props
 
-## Examples
+	| Props       | Description    |
+	| ----------- | -------------- |
+	| msg         | Title message  |
 
-<script setup>
-const msgs = [
-  'Hello Peter',
-  'Hello John',
-];
-</script>
+	## Examples
 
-<template v-for="msg in msgs">
-	<slot :msg="msg"></slot>
-</template>
+	<script setup>
+	const msgs = [
+	'Hello Peter',
+	'Hello John',
+	];
+	</script>
 
-<style>
-body {
-	background-color: green;
-}
-</style>
+	<template v-for="msg in msgs">
+		<slot :msg="msg"></slot>
+	</template>
+
+	<style>
+	body {
+		background-color: green;
+	}
+	</style>
 
 </preview>
 ```
@@ -106,16 +107,17 @@ When you want to preview the component including `<slot>`, importing the compone
 </template>
 
 <preview lang="md">
-<script setup>
-import TestPreview from './TestPreview.vue'	// TestPreview.vue is the name of this file itself.
-const msgs = ['1', '2']
-</script>
 
-<template v-for="msg in msgs">
-	<TestPreview>
-		test {{ msg }}
-	</TestPreview>
-</template>
+	<script setup>
+	import TestPreview from './TestPreview.vue'	// TestPreview.vue is the name of this file itself.
+	const msgs = ['1', '2']
+	</script>
+
+	<template v-for="msg in msgs">
+		<TestPreview>
+			test {{ msg }}
+		</TestPreview>
+	</template>
 
 </preview>
 ```
