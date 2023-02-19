@@ -94,6 +94,34 @@ body {
 
 Example repo: https://github.com/johnsoncodehk/volar-starter (Open http://localhost:3000/__preview/src/components/HelloWorld.vue to see the result.)
 
+### Self-import
+
+When you want to preview the component including `<slot>`, importing the component itself provides the solution as follows:
+
+```html
+<template>
+	<div>
+		<slot></slot>
+	</div>
+</template>
+
+<preview lang="md">
+<script setup>
+import TestPreview from './TestPreview.vue'	// TestPreview.vue is the name of this file itself.
+const msgs = ['1', '2']
+</script>
+
+<template v-for="msg in msgs">
+	<TestPreview>
+		test {{ msg }}
+	</TestPreview>
+</template>
+
+</preview>
+```
+
+This method relates to [#17](https://github.com/johnsoncodehk/vite-plugin-vue-component-preview/issues/17).
+
 ## Sponsors
 
 <p align="center">
