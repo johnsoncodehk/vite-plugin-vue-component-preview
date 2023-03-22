@@ -15,11 +15,6 @@ export default function vuePreviewPlugin(): Plugin {
 
 	return {
 		name: 'vite-plugin-vue-component-preview',
-		configResolved(config){
-			config.define.preview = {
-				base: config.base
-			}
-		},
 		configureServer(_server) {
 			server = _server;
 			server.middlewares.use((req, res, next) => {
