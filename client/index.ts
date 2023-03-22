@@ -4,9 +4,9 @@ export default function (app: App) {
 
 	const location = globalThis.location;
 
-	if (location && location.pathname.startsWith('/__preview/')) {
+	if (location && location.pathname.startsWith(globalThis.preview.base + '__preview/')) {
 
-		const importPath = location.pathname.substring('/__preview'.length);
+		const importPath = location.pathname.replace('__preview/', '');
 		const Component = defineAsyncComponent(() => import(/* @vite-ignore */importPath));
 		const Layout = defineAsyncComponent(() => import(/* @vite-ignore */importPath + '__preview.vue'));
 

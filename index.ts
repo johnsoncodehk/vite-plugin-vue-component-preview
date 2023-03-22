@@ -15,11 +15,16 @@ export default function vuePreviewPlugin(): Plugin {
 
 	return {
 		name: 'vite-plugin-vue-component-preview',
+		configResolved(config){
+			config.define.preview = {
+				base: config.base
+			}
+		},
 		configureServer(_server) {
 			server = _server;
 			server.middlewares.use((req, res, next) => {
-				if (req.url?.startsWith('/__preview/')) {
-					req.url = '/'; // avoid 404
+				if (req.url?.startsWith(server.config.base + '__preview/')) {
+					req.url = server.config.base; // avoid 404
 				}
 				next();
 			});
