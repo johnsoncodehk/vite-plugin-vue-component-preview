@@ -4,7 +4,7 @@ export default function (app: App) {
 
 	const location = globalThis.location;
 
-    if (location && location.pathname.includes('/__preview/')) {
+	if (location && location.pathname.includes('/__preview/')) {
 
 		const importPath = location.pathname.replace('/__preview', '');
 		const Component = defineAsyncComponent(() => import(/* @vite-ignore */importPath));
